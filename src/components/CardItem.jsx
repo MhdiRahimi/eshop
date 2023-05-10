@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Stack,
   Text,
@@ -9,11 +9,8 @@ import {
   CardBody,
   Box,
   Badge,
-  Button,
 } from '@chakra-ui/react';
-import { useSelector, useDispatch } from 'react-redux';
-import { decrement, increment } from '../features/counterSlice';
-import { motion } from 'framer-motion';
+
 
 const CardItem = ({ item }) => {
   const [image, setImage] = useState(item.images?.img1);
