@@ -97,7 +97,7 @@ const Products = () => {
         transition: { duration: '0.3', type: 'ease-in-out' },
       }}
     >
-      <Box>
+      <Box mx="auto">
         <Center>
           {' '}
           <Heading
@@ -139,10 +139,10 @@ const Products = () => {
           gap={3}
           mt={{ sm: '5rem' }}
           templateColumns={{
+            base: 'repeat(1, 12fr)',
             sm: 'repeat(1, 12fr)',
             md: 'repeat(3,12fr)',
             lg: 'repeat(3,12fr)',
-            '2xl': 'repeat(5,12fr)',
           }}
         >
           <GridItem colSpan={1} p="0.3rem">

@@ -213,28 +213,35 @@ const Navbar = () => {
                       <Center width="100p%" h="5rem" color="#000000">
                         <motion.div
                           style={{
-                            borderRadius: '5px',
-                            width: '80%',
+                            width: '100%',
                           }}
+                          onClick={onClose}
                         >
                           <NavLink
                             to="/products/men"
-                            onClick={onClose}
                             style={({ isActive }) => {
                               return isActive ? activeLink : linkStyle;
                             }}
                           >
-                            Men
+                            <Center>
+                              <Center
+                                fontFamily={'serif'}
+                                fontStyle={'italic'}
+                                fontSize={'2xl'}
+                                fontWeight={'bold'}
+                              >
+                                Men
+                              </Center>
+                            </Center>
                           </NavLink>
                         </motion.div>
                       </Center>
                       <Center w="100%" h="5rem" color="#000000">
                         <motion.div
-                          style={{
-                            borderRadius: '5px',
-                            width: '80%',
-                          }}
                           onClick={onClose}
+                          style={{
+                            width: '100%',
+                          }}
                         >
                           <NavLink
                             to="/products/women"
@@ -242,18 +249,26 @@ const Navbar = () => {
                               return isActive ? activeLink : linkStyle;
                             }}
                           >
-                            Women
+                            <Center>
+                              <Center
+                                fontFamily={'serif'}
+                                fontStyle={'italic'}
+                                fontSize={'2xl'}
+                                fontWeight={'bold'}
+                              >
+                                Women
+                              </Center>
+                            </Center>
                           </NavLink>
                         </motion.div>
                       </Center>
 
                       <Center w="100%" h="5rem" color="red.400">
                         <motion.div
-                          style={{
-                            borderRadius: '5px',
-                            width: '80%',
-                          }}
                           onClick={onClose}
+                          style={{
+                            width: '100%',
+                          }}
                         >
                           <NavLink
                             to="/products/off"
@@ -261,7 +276,17 @@ const Navbar = () => {
                               return isActive ? activeLink : linkStyle;
                             }}
                           >
-                            <Text fontWeight="semibold">50% OFF</Text>
+                            <Center>
+                              <Center
+                                fontFamily={'serif'}
+                                fontStyle={'italic'}
+                                fontSize={'2xl'}
+                                fontWeight={'bold'}
+                                color={'red.500'}
+                              >
+                                50% OFF
+                              </Center>
+                            </Center>
                           </NavLink>
                         </motion.div>
                       </Center>

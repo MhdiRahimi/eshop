@@ -76,127 +76,128 @@ export default function SimpleCard() {
           token: data.session,
         },
       });
-     
     } catch (error) {
       console.log(error);
     }
   }
-  
-    return (
-      <>
-        <Box mt="2rem" px="5rem">
-          <Text fontWeight={'semibold'} mr="5rem">
-            demoEmail : demoacc@gmail.com
-          </Text>
-          <Text fontWeight={'semibold'}>demoPass : 123456789</Text>
-        </Box>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{
-            opacity: 0,
-            transition: { duration: '0.3', type: 'ease-in-out' },
-          }}
+
+  return (
+    <>
+      <Box mt="2rem" px="5rem" w="full">
+        <Text fontWeight={'semibold'} mr="1rem" textAlign={'center'}>
+          demoEmail : demoacc@gmail.com
+        </Text>
+        <Text fontWeight={'semibold'} mr="1rem" textAlign={'center'}>
+          demoPass : 123456789
+        </Text>
+      </Box>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{
+          opacity: 0,
+          transition: { duration: '0.3', type: 'ease-in-out' },
+        }}
+      >
+        <Flex
+          minH={'100vh'}
+          align={'center'}
+          justify={'center'}
+          width={'100%'}
+          py="12"
+          px="8"
         >
-          <Flex
-            minH={'100vh'}
-            align={'center'}
-            justify={'center'}
-            width={'95%'}
-            py="12"
-            px="8"
-          >
-            <Stack spacing={8} mx={'auto'} maxW={'lg'}>
-              <Stack align={'center'}>
-                <Heading
-                  mb="0.5rem"
-                  overflow={'hidden'}
-                  fontSize={{ md: '4xl', sm: '2xl' }}
-                  fontStyle="italic"
-                >
-                  Sign in to your account
-                </Heading>
-              </Stack>
-              <Box bgColor={'white'} rounded={'lg'} boxShadow={'lg'} p={8}>
-                <Stack spacing={4}>
-                  <FormControl id="email" isRequired>
-                    <FormLabel>Email address</FormLabel>
+          <Stack spacing={8} mx={'auto'} maxW={'lg'}>
+            <Stack align={'center'}>
+              <Heading
+                mb="0.5rem"
+                overflow={'hidden'}
+                fontSize={{ md: '4xl', sm: '2xl' }}
+                fontStyle="italic"
+              >
+                Sign in to your account
+              </Heading>
+            </Stack>
+            <Box bgColor={'white'} rounded={'lg'} boxShadow={'lg'} p={8}>
+              <Stack spacing={4}>
+                <FormControl id="email" isRequired>
+                  <FormLabel>Email address</FormLabel>
+                  <Input
+                    focusBorderColor="none"
+                    type="email"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl id="password" isRequired>
+                  <FormLabel>Password</FormLabel>
+                  <InputGroup>
                     <Input
                       focusBorderColor="none"
-                      type="email"
-                      onChange={(e) => setEmail(e.target.value)}
+                      type={showPassword ? 'text' : 'password'}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
-                  </FormControl>
-                  <FormControl id="password" isRequired>
-                    <FormLabel>Password</FormLabel>
-                    <InputGroup>
-                      <Input
-                        focusBorderColor="none"
-                        type={showPassword ? 'text' : 'password'}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                      <InputRightElement
-                        h={'full'}
-                        onClick={() =>
-                          setShowPassword((showPassword) => !showPassword)
-                        }
-                      >
-                        {showPassword ? (
-                          <Eye size="28" />
-                        ) : (
-                          <EyeSlash size="28" />
-                        )}
-                      </InputRightElement>
-                    </InputGroup>
-                  </FormControl>
-                  <Stack>
-                    <Stack
-                      my="1rem"
-                      direction={{ base: 'column', sm: 'row' }}
-                      align={'start'}
-                      justify={'space-between'}
+                    <InputRightElement
+                      h={'full'}
+                      onClick={() =>
+                        setShowPassword((showPassword) => !showPassword)
+                      }
                     >
-                      <Checkbox iconColor="#000" colorScheme="gray">
-                        Remember me
-                      </Checkbox>
-                      <Box
-                        _hover={{ color: 'gray', textDecoration: 'underline' }}
-                      >
-                        <NavLink>Forgot password?</NavLink>
-                      </Box>
-                    </Stack>
-                    <Text display={{ sm: 'flex', base: 'grid' }}>
-                      Don't have an account?
-                      <Box
-                        ml="0.3rem"
-                        _hover={{ color: 'gray', textDecoration: 'underline' }}
-                      >
-                        <NavLink to="/register">Register</NavLink>
-                      </Box>
-                    </Text>
-                    <Center>
-                      <Button
-                        mt="1rem"
-                        variant={'outline'}
-                        border="1px solid black"
-                        bg="black"
-                        color="white"
-                        _hover={{
-                          bg: 'white',
-                          color: 'black',
-                        }}
-                        width={'200px'}
-                        onClick={logInHandler}
-                      >
-                        Sign in
-                      </Button>
-                    </Center>
+                      {showPassword ? (
+                        <Eye size="28" />
+                      ) : (
+                        <EyeSlash size="28" />
+                      )}
+                    </InputRightElement>
+                  </InputGroup>
+                </FormControl>
+                <Stack>
+                  <Stack
+                    my="1rem"
+                    direction={{ base: 'column', sm: 'row' }}
+                    align={'start'}
+                    justify={'space-between'}
+                  >
+                    <Checkbox iconColor="#000" colorScheme="gray">
+                      Remember me
+                    </Checkbox>
+                    <Box
+                      _hover={{ color: 'gray', textDecoration: 'underline' }}
+                    >
+                      <NavLink>Forgot password?</NavLink>
+                    </Box>
                   </Stack>
+                  <Text display={{ sm: 'flex', base: 'grid' }}>
+                    Don't have an account?
+                    <Box
+                      ml="0.3rem"
+                      _hover={{ color: 'gray', textDecoration: 'underline' }}
+                    >
+                      <NavLink to="/register">Register</NavLink>
+                    </Box>
+                  </Text>
+                  <Center>
+                    <Button
+                      mt="1rem"
+                      variant={'outline'}
+                      border="1px solid black"
+                      bg="black"
+                      color="white"
+                      _hover={{
+                        bg: 'white',
+                        color: 'black',
+                      }}
+                      width={'200px'}
+                      onClick={logInHandler}
+                    >
+                      Sign in
+                    </Button>
+                  </Center>
                 </Stack>
-              </Box>
-            </Stack>
-          </Flex>
-        </motion.div>
-      </>
-    );
+              </Stack>
+            </Box>
+          </Stack>
+        </Flex>
+      </motion.div>
+    </>
+  );
 }

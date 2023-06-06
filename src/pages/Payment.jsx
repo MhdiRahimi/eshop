@@ -46,16 +46,18 @@ const Payment = () => {
     });
   });
 
+  const scrollUp = () => {
+    window.scrollTo({
+      top: '0',
+      behavior: 'smooth',
+    });
+  };
+
+  useEffect(() => {
+    scrollUp();
+  }, []);
+
   async function checkoutHandler() {
-      const scrollUp = () => {
-        window.scrollTo({
-          top: '0',
-          behavior: 'smooth',
-        });
-      };
-      useEffect(() => {
-        scrollUp();
-      }, []);
     const { error, data } = await supabase.from('orders').insert(products);
     try {
       dispatch(clearCart());
