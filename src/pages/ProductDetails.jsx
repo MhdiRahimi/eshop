@@ -47,9 +47,9 @@ const ProductDetails = () => {
   const dispatch = useDispatch();
   let location = useLocation();
   let item = location.state.item;
-  let offPrice = (item.price * item.off) / 100 + item.price;
-  const toast = useToast();
 
+  const toast = useToast();
+  console.log(item);
   function addToCart() {
     dispatch(addCart(item));
     toast({
@@ -68,7 +68,7 @@ const ProductDetails = () => {
     dispatch(decrementQuantity(item));
   }
   let quanty = [];
-  cartItems.filter((el) => (el.id === item.id ? quanty.push(el.quanty) : 0));
+  cartItems.filter((el) => (el.id === item.id ? quanty.push(el.stock) : 0));
 
   if (quanty[0] === 0) {
     dispatch(removeItem(item));
@@ -89,7 +89,8 @@ const ProductDetails = () => {
   useEffect(() => {
     scrollUp();
   }, []);
-
+  let offPrice = (item.price * item.discount) / 100 + item.price;
+  console.log(item);
   return (
     <>
       <motion.div
@@ -110,7 +111,7 @@ const ProductDetails = () => {
             }}
             overflow={'hidden'}
           >
-            <CarouselItemDetails images={item.images} items={item} />
+            <CarouselItemDetails images={item.imageUrl} items={item} />
 
             <Flex
               justifyContent={{ md: 'space-between', base: 'center' }}
@@ -130,7 +131,7 @@ const ProductDetails = () => {
                 fontWeight={'bold'}
                 width={'500px'}
               >
-                {item.title}
+                {item.name}
               </Text>
               <Stack
                 direction={'row'}
@@ -165,7 +166,7 @@ const ProductDetails = () => {
                   overflow={'hidden'}
                   fontWeight={'bold'}
                 >
-                  {item.price}$
+                  {parseInt(item.price)}$
                 </Text>
                 <Text
                   fontSize={'2xl'}
@@ -175,7 +176,7 @@ const ProductDetails = () => {
                   color={'gray.600'}
                   textDecorationColor="red.600"
                   textDecorationThickness={'1px'}
-                  display={item.off > 0 ? 'block' : 'none'}
+                  display={item.discount > 0 ? 'block' : 'none'}
                 >
                   {offPrice.toFixed(1)}$
                 </Text>
@@ -207,53 +208,59 @@ const ProductDetails = () => {
                   <option value="option3">large</option>
                 </Select>
 
-                <Stack direction={'row'} mt="3rem">
-                  <Center>
-                    {quanty > 0 && (
-                      <Flex
-                        border="1px solid black"
-                        justifyContent={'space-between'}
-                        mr="2rem"
-                        rounded={'md'}
-                        overflow={'hidden'}
-                        p="4px"
+                {item.stock > 0 ? (
+                  <Stack direction={'row'} mt="3rem">
+                    <Center>
+                      {quanty > 0 && (
+                        <Flex
+                          border="1px solid black"
+                          justifyContent={'space-between'}
+                          mr="2rem"
+                          rounded={'md'}
+                          overflow={'hidden'}
+                          p="4px"
+                        >
+                          <Button
+                            size="sx"
+                            overflow={'hidden'}
+                            variant={'ghost'}
+                            _hover={{ backgroundColor: 'none', color: 'none' }}
+                            onClick={minus}
+                            isDisabled={quanty < 1 ? true : false}
+                          >
+                            <Minus size="28" />
+                          </Button>
+                          <Text overflow={'hidden'} px="1rem">
+                            {quanty < 1 ? 0 : quanty}
+                          </Text>
+                          <Button
+                            size="sx"
+                            overflow={'hidden'}
+                            variant={'ghost'}
+                            _hover={{ backgroundColor: 'none', color: 'none' }}
+                            onClick={add}
+                            isDisabled={quanty >= item.stock ? true : false}
+                          >
+                            <Add size="28" />
+                          </Button>
+                        </Flex>
+                      )}
+                      <Button
+                        bgColor={'black'}
+                        color="white"
+                        _hover={{ backgroundColor: 'none', color: 'none' }}
+                        onClick={addToCart}
+                        width={'150px'}
                       >
-                        <Button
-                          size="sx"
-                          overflow={'hidden'}
-                          variant={'ghost'}
-                          _hover={{ backgroundColor: 'none', color: 'none' }}
-                          onClick={minus}
-                          isDisabled={quanty < 1 ? true : false}
-                        >
-                          <Minus size="28" />
-                        </Button>
-                        <Text overflow={'hidden'} px="1rem">
-                          {quanty < 1 ? 0 : quanty}
-                        </Text>
-                        <Button
-                          size="sx"
-                          overflow={'hidden'}
-                          variant={'ghost'}
-                          _hover={{ backgroundColor: 'none', color: 'none' }}
-                          onClick={add}
-                          isDisabled={quanty > item.stock ? true : false}
-                        >
-                          <Add size="28" />
-                        </Button>
-                      </Flex>
-                    )}
-                    <Button
-                      bgColor={'black'}
-                      color="white"
-                      _hover={{ backgroundColor: 'none', color: 'none' }}
-                      onClick={addToCart}
-                      width={'150px'}
-                    >
-                      Add to cart
-                    </Button>
-                  </Center>
-                </Stack>
+                        Add to cart
+                      </Button>
+                    </Center>
+                  </Stack>
+                ) : (
+                  <h1 className=" text-3xl font-bold text-red-600">
+                    out of stock
+                  </h1>
+                )}
               </Grid>
             </Flex>
           </Grid>

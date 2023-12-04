@@ -30,7 +30,7 @@ const Orders = () => {
     const { data, error } = await supabase
       .from('orders')
       .select()
-      .eq('userId', session.user.id);
+      .eq('userId', session?.user?.id);
     try {
       setData(data);
     } catch (error) {
@@ -44,7 +44,6 @@ const Orders = () => {
 
   useEffect(() => {
     getOrders();
-    
   }, [session]);
 
   const scrollUp = () => {
@@ -56,6 +55,7 @@ const Orders = () => {
   useEffect(() => {
     scrollUp();
   }, []);
+
   return (
     <>
       <Container maxW={'95%'} mt="1rem" bgColor="white">

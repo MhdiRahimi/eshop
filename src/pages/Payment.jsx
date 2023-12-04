@@ -29,36 +29,30 @@ const Payment = () => {
   async function getuser() {
     const { data } = await supabase.auth.getUser();
     setId(data.user.id);
+     console.log(id);
   }
 
   useEffect(() => {
     getuser();
   }, []);
 
+ 
+
   let products = [];
   let items = cart.map((c) => {
     products.push({
-      title: c.title,
+      title: c.name,
       price: c.price,
       quanty: c.quanty,
       product_id: c.id,
       userId: id,
+      imageUrl: c.imageUrl,
     });
   });
 
-  const scrollUp = () => {
-    window.scrollTo({
-      top: '0',
-      behavior: 'smooth',
-    });
-  };
-
-  useEffect(() => {
-    scrollUp();
-  }, []);
-
   async function checkoutHandler() {
     const { error, data } = await supabase.from('orders').insert(products);
+    console.log(data);
     try {
       dispatch(clearCart());
       navigate('/orders');
@@ -80,7 +74,54 @@ const Payment = () => {
         position: 'top-right',
       });
     }
+
+    try {
+      // Loop through each product in the order
+      for (const product of products) {
+        const productId = product.product_id; // Replace with the actual column name
+        const purchasedQuantity = product.quanty; // Replace with the actual column name
+
+        // Fetch the current stock quantity from the 'menProducts' table
+        const { data: productData, error: fetchError } = await supabase
+          .from('menProducts')
+          .select('stock')
+          .eq('id', productId)
+          .single();
+
+        if (fetchError) {
+          throw fetchError;
+        }
+
+        // Update the stock quantity by subtracting the purchased quantity
+        const updatedStock = productData.stock - purchasedQuantity;
+
+        // Update the 'menProducts' table with the new stock quantity
+        const { data: updatedProduct, error: updateError } = await supabase
+          .from('menProducts')
+          .update({ stock: updatedStock })
+          .eq('id', productId);
+
+        if (updateError) {
+          throw updateError;
+        }
+      }
+
+      console.log('Stock updated successfully');
+    } catch (error) {
+      console.error('Error updating stock:', error.message);
+    }
   }
+
+  const scrollUp = () => {
+    window.scrollTo({
+      top: '0',
+      behavior: 'smooth',
+    });
+  };
+
+  useEffect(() => {
+    scrollUp();
+  }, []);
 
   return (
     <>

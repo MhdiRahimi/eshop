@@ -22,7 +22,7 @@ const CartItems = ({ item, qty }) => {
   let price = (item.price * item.quanty).toFixed(1);
   let navigate = useNavigate();
   function forwardData() {
-    navigate(`/productdetails/${item.title}`, {
+    navigate(`/productdetails/${item.name}`, {
       state: {
         item: item,
       },
@@ -39,6 +39,8 @@ const CartItems = ({ item, qty }) => {
       position: 'bottom-right',
     });
   }
+  const urlImage = `https://rbaomvdckrmiwqyvkrfl.supabase.co/storage/v1/object/public/products-images/`;
+  console.log(item);
   return (
     <Box py="1rem" overflow="hidden">
       <Card
@@ -51,7 +53,7 @@ const CartItems = ({ item, qty }) => {
           objectFit="cover"
           minW="200px"
           h="200px"
-          src={item?.images?.img1}
+          src={urlImage + item.imageUrl}
           alt={item.title}
           onClick={forwardData}
           cursor={'pointer'}
@@ -60,7 +62,7 @@ const CartItems = ({ item, qty }) => {
         <Stack overflow="hidden" mt="-1rem">
           <CardBody overflow="hidden">
             <Text fontSize={'1xl'} overflow={'hidden'} fontWeight={'bold'}>
-              {item.title}
+              {item.name}
             </Text>
             <Text
               fontSize={'sm'}

@@ -1,17 +1,30 @@
+// import { createSlice } from '@reduxjs/toolkit';
+// import items from '../items';
 
+// const initialState = {
+//   value: items.menClothes,
+// };
+
+// export const menClothesSlice = createSlice({
+//   name: 'menProducts',
+//   initialState,
+//   reducers: {},
+// });
+
+// export default menClothesSlice.reducer;
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import supabase from '../config/supabaseClient'; // Import your Supabase configuration
 
 // Async thunk for fetching data from Supabase
-export const fetchMenClothes = createAsyncThunk(
-  'menProducts/fetchMenClothes',
+export const fetchOffClothes = createAsyncThunk(
+  'menProducts/fetchOffClothes',
   async () => {
     try {
       const { data, error } = await supabase
         .from('menProducts')
         .select('*')
-        .neq('gender', 'women'); // Exclude women's clothes
+        .gt('discount', 0);
       if (error) {
         throw error;
       }
@@ -28,24 +41,24 @@ const initialState = {
   error: null,
 };
 
-export const menClothesSlice = createSlice({
-  name: 'menProducts',
+export const offClothesSlice = createSlice({
+  name: 'offProducts',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchMenClothes.pending, (state) => {
+      .addCase(fetchOffClothes.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(fetchMenClothes.fulfilled, (state, action) => {
+      .addCase(fetchOffClothes.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.value = action.payload;
       })
-      .addCase(fetchMenClothes.rejected, (state, action) => {
+      .addCase(fetchOffClothes.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
   },
 });
 
-export default menClothesSlice.reducer;
+export default offClothesSlice.reducer;

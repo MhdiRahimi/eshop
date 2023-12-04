@@ -14,13 +14,19 @@ import {
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addCart } from '../features/cartSlice';
-export default function socialProfileWithImageHorizontal({ foundItem, close }) {
-  let offPrice = (foundItem?.price * foundItem?.off) / 100 + foundItem?.price;
+
+export default function socialProfileWithImageHorizontal({
+  foundItem,
+  close,
+  status,
+}) {
+  let offPrice =
+    (foundItem?.price * foundItem?.discount) / 100 + foundItem?.price;
   const dispatch = useDispatch();
   let navigate = useNavigate();
   function forwardData() {
     close();
-    navigate(`/productdetails/${foundItem.title}`, {
+    navigate(`/productdetails/${foundItem.name}`, {
       state: {
         item: foundItem,
       },
@@ -40,35 +46,35 @@ export default function socialProfileWithImageHorizontal({ foundItem, close }) {
     });
   }
 
+  const urlImage = `https://rbaomvdckrmiwqyvkrfl.supabase.co/storage/v1/object/public/products-images/`;
   return (
     <>
-      <Center py={6} onClick={forwardData}>
+      <Center py={6} onClick={!status && forwardData}>
         <Stack
           borderWidth="1px"
           borderRadius="lg"
           w={{ sm: '80%', md: '800px', base: '100%' }}
-          height={{ sm: 'auto', md: '22rem' }}
+          height={{ sm: 'auto', md: '19rem' }}
           direction={{ base: 'row' }}
           bg={useColorModeValue('white', 'gray.900')}
-          boxShadow={'2xl'}
           padding={{ sm: 1, md: 2, base: 0 }}
         >
-          <Flex flex={1}>
+          <Flex flex={1} position={'relative'}>
             <Badge
-              display={foundItem.off > 0 ? 'block' : 'none'}
+              display={foundItem.discount > 0 ? 'block' : 'none'}
               zIndex={2}
               position={'absolute'}
               colorScheme={'red'}
               variant="solid"
             >
               <Text fontWeight={'semibold'} fontSize="medium">
-                {foundItem.off}% OFF
+                {foundItem.discount}% OFF
               </Text>
             </Badge>
             <Image
               objectFit="cover"
               boxSize="100%"
-              src={foundItem.images?.img1}
+              src={urlImage + foundItem.imageUrl}
             />
           </Flex>
           <Stack
@@ -86,7 +92,7 @@ export default function socialProfileWithImageHorizontal({ foundItem, close }) {
               align={'center'}
               justify={'center'}
             >
-              {foundItem.title}
+              {foundItem.name}
             </Heading>
             <Text
               fontWeight={600}
@@ -124,36 +130,38 @@ export default function socialProfileWithImageHorizontal({ foundItem, close }) {
               color={'gray.600'}
               textDecorationColor="red.600"
               textDecorationThickness={'1px'}
-              display={foundItem.off > 0 ? 'block' : 'none'}
+              display={foundItem.discount > 0 ? 'block' : 'none'}
             >
-              {offPrice.toFixed(1)}$
+              {offPrice}$
             </Text>
 
-            <Stack
-              width={'100%'}
-              mt={'2rem'}
-              direction={'row'}
-              padding={2}
-              justifyContent={'space-between'}
-              alignItems={'center'}
-            >
-              <Button
-                overflow={'hidden'}
-                flex={1}
-                fontSize={'sm'}
-                rounded={'full'}
-                color={'white'}
-                bgColor={'black'}
-                _hover={{
-                  backgroundColor: 'none',
-                  color: 'none',
-                  scale: '1.1',
-                }}
-                onClick={addToCart}
+            {!status && (
+              <Stack
+                width={'100%'}
+                mt={'2rem'}
+                direction={'row'}
+                padding={2}
+                justifyContent={'space-between'}
+                alignItems={'center'}
               >
-                Add to card
-              </Button>
-            </Stack>
+                <Button
+                  overflow={'hidden'}
+                  flex={1}
+                  fontSize={'sm'}
+                  rounded={'full'}
+                  color={'white'}
+                  bgColor={'black'}
+                  _hover={{
+                    backgroundColor: 'none',
+                    color: 'none',
+                    scale: '1.1',
+                  }}
+                  onClick={addToCart}
+                >
+                  Add to card
+                </Button>
+              </Stack>
+            )}
           </Stack>
         </Stack>
       </Center>

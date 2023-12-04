@@ -15,8 +15,17 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Add, Minus } from 'iconsax-react';
-const AccordiansProduct = ({ items }) => {
-  const [priceFilter, setPriceFilter] = useState([0, 1500]);
+const AccordiansProduct = ({
+  items,
+  setSelectedPriceRange,
+  selectedPriceRange,
+  selectedBrands,
+  setSelectedBrands,
+  selectDesigner,
+  setSelectDesigner,
+}) => {
+  // const [selectedBrands, setSelectedBrands] = useState([]);
+  // const [priceFilter, setPriceFilter] = useState([0, 150]);
 
   let brands = [];
   items.forEach((item) => {
@@ -25,7 +34,33 @@ const AccordiansProduct = ({ items }) => {
     }
     return brands;
   });
+  let designers = [];
+  items.forEach((item) => {
+    if (!designers.includes(item.designer)) {
+      designers.push(item.designer);
+    }
+    return designers;
+  });
 
+  console.log(items);
+
+  const brandChange = (e) => {
+    const { value, checked } = e.target;
+    setSelectedBrands((prevSelectedBrands) =>
+      checked
+        ? [...prevSelectedBrands, value]
+        : prevSelectedBrands.filter((brand) => brand !== value)
+    );
+  };
+
+  const designerChange = (e) => {
+    const { value, checked } = e.target;
+    setSelectDesigner((prevSelectDesigner) =>
+      checked
+        ? [...prevSelectDesigner, value]
+        : prevSelectDesigner.filter((designer) => designer !== value)
+    );
+  };
   return (
     <>
       <Box>
@@ -36,7 +71,7 @@ const AccordiansProduct = ({ items }) => {
                 <h2>
                   <AccordionButton>
                     <Box as="span" flex="1" textAlign="left">
-                      Manufacturer
+                      Brands
                     </Box>
                     {!isExpanded ? (
                       <Add size="22" color="#000" />
@@ -48,13 +83,14 @@ const AccordiansProduct = ({ items }) => {
                 <AccordionPanel pb={4}>
                   <CheckboxGroup colorScheme="gray">
                     <Stack>
-                      <Checkbox iconColor="#000" defaultChecked>
-                        All
-                      </Checkbox>
-
                       {brands.map((brand, i) => {
                         return (
-                          <Checkbox key={i} iconColor="#000">
+                          <Checkbox
+                            key={i}
+                            iconColor="#000"
+                            value={brand}
+                            onChange={brandChange}
+                          >
                             {brand}
                           </Checkbox>
                         );
@@ -85,11 +121,11 @@ const AccordiansProduct = ({ items }) => {
                   <Box>
                     <RangeSlider
                       aria-label={['min', 'max']}
-                      defaultValue={[0, 1500]}
+                      defaultValue={[0, 100]}
                       min={0}
-                      max={1500}
-                      step={30}
-                      onChangeEnd={(val) => setPriceFilter(val)}
+                      max={150}
+                      step={1}
+                      onChangeEnd={(val) => setSelectedPriceRange(val)}
                     >
                       <RangeSliderTrack>
                         <RangeSliderFilledTrack bg="blackAlpha.900" />
@@ -99,8 +135,8 @@ const AccordiansProduct = ({ items }) => {
                     </RangeSlider>
                   </Box>
                   <Box display={'flex'} justifyContent={'space-between'}>
-                    <Text>{priceFilter[0]}$</Text>
-                    <Text>{priceFilter[1]}$</Text>
+                    <Text>{selectedPriceRange[0]}$</Text>
+                    <Text>{selectedPriceRange[1]}$</Text>
                   </Box>
                 </AccordionPanel>
               </>
@@ -113,7 +149,7 @@ const AccordiansProduct = ({ items }) => {
                 <h2>
                   <AccordionButton>
                     <Box as="span" flex="1" textAlign="left">
-                      How to buy
+                      Designer
                     </Box>
                     {!isExpanded ? (
                       <Add size="22" color="#000" />
@@ -125,10 +161,18 @@ const AccordiansProduct = ({ items }) => {
                 <AccordionPanel pb={4}>
                   <CheckboxGroup colorScheme="whiteAlpha">
                     <Stack>
-                      <Checkbox iconColor="#000">USD</Checkbox>
-                      <Checkbox iconColor="#000">Crypto</Checkbox>
-                      <Checkbox iconColor="#000"> EUR</Checkbox>
-                      <Checkbox iconColor="#000"> IRR</Checkbox>
+                      {designers.map((designer, i) => {
+                        return (
+                          <Checkbox
+                            key={i}
+                            iconColor="#000"
+                            value={designer}
+                            onChange={designerChange}
+                          >
+                            {designer}
+                          </Checkbox>
+                        );
+                      })}
                     </Stack>
                   </CheckboxGroup>
                 </AccordionPanel>

@@ -31,13 +31,22 @@ const settings = {
 function CarouselItemDetails({ images, items }) {
   const [slider, setSlider] = useState();
 
-  const top = useBreakpointValue({ md: '50%', sm: '80%',lg:'70%' ,base:'50%'});
-  const side = useBreakpointValue({ md: '10%', sm: '10px',lg:'10px' ,base:'10px'});
+  const top = useBreakpointValue({
+    md: '50%',
+    sm: '80%',
+    lg: '70%',
+    base: '50%',
+  });
+  const side = useBreakpointValue({
+    md: '10%',
+    sm: '10px',
+    lg: '10px',
+    base: '10px',
+  });
 
   let imgs = [];
   for (let key in images) imgs.push(images[key]);
-
-
+  const urlImage = `https://rbaomvdckrmiwqyvkrfl.supabase.co/storage/v1/object/public/products-images/`;
   return (
     <Center overflow={'hidden'}>
       <Box
@@ -89,7 +98,7 @@ function CarouselItemDetails({ images, items }) {
         </IconButton>
         {/* Slider */}
         <Badge
-          display={items.off > 0 ? 'block' : 'none'}
+          display={items.discount > 0 ? 'block' : 'none'}
           zIndex={2}
           position={'absolute'}
           colorScheme={'red'}
@@ -99,7 +108,7 @@ function CarouselItemDetails({ images, items }) {
           textAlign="end"
         >
           <Text fontWeight={'semibold'} fontSize="medium">
-            {items.off}% OFF
+            {items.discount}% OFF
           </Text>
         </Badge>
         <Slider
@@ -107,13 +116,14 @@ function CarouselItemDetails({ images, items }) {
           ref={(slider) => setSlider(slider)}
           style={{ overflow: 'hidden' }}
         >
-          {imgs.map((img,i) => {
+          <Image zIndex={1} src={urlImage + images} />
+          {/* {imgs.map((img, i) => {
             return (
               <>
                 <Image key={i} zIndex={1} src={img} />
               </>
             );
-          })}
+          })} */}
         </Slider>
       </Box>
     </Center>

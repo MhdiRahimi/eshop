@@ -19,22 +19,34 @@ import {
 } from '@chakra-ui/react';
 import CardSearch from './CardSearch';
 import { RiUserLine, RiSearchLine } from 'react-icons/ri';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Autocomplete } from 'chakra-ui-simple-autocomplete';
 import { useSelector, useDispatch } from 'react-redux';
 import { Hint } from 'react-autocomplete-hint';
 import { motion } from 'framer-motion';
-const Search = () => {
-  const menItems = useSelector((state) => state.menProducts.value);
-  const womenItems = useSelector((state) => state.womenProducts.value);
-  let allItems = menItems.concat(womenItems);
-  const [result, setResult] = useState('');
-  const [foundItem, setFoundItem] = useState([]);
-  const [err, setErr] = useState('');
-  let name = allItems.map((n) => {
-    return n.title;
-  });
+import { fetchAllClothes } from '../features/allClothsSlice';
 
+const Search = () => {
+  const dispatch = useDispatch();
+  const allClothes = useSelector((state) => state.allClothes.value);
+
+  const [result, setResult] = useState('');
+
+  useEffect(() => {
+    dispatch(fetchAllClothes());
+  }, [dispatch]);
+
+  // Filter items based on the search input
+  const filteredItems = allClothes.filter((item) => {
+    const lowercasedQuery = result.toLowerCase();
+
+    // Check if the name, brand, or designer includes the search query
+    return (
+      item.name.toLowerCase().includes(lowercasedQuery) ||
+      item.brand.toLowerCase().includes(lowercasedQuery) ||
+      item.designer.toLowerCase().includes(lowercasedQuery)
+    );
+  });
   const {
     onOpen: onOpenSearch,
     isOpen: isOpenSearch,
@@ -44,15 +56,6 @@ const Search = () => {
     onOpenSearch();
     setFoundItem('');
   };
-
-  function searchHandler() {
-    for (let product of allItems) {
-      if (product.title.toUpperCase() === result.toUpperCase()) {
-        setFoundItem(product);
-      }
-    }
-    setResult('');
-  }
 
   return (
     <>
@@ -71,6 +74,7 @@ const Search = () => {
         isOpen={isOpenSearch}
         size="full"
         placement="top"
+        blockScrollOnMount
       >
         <DrawerOverlay />
         <DrawerContent bgColor="rgba(255, 251, 251, 0.8)">
@@ -82,32 +86,25 @@ const Search = () => {
               mx={{ md: '8rem', sm: '1rem', base: '0.5rem' }}
               display="flex"
             >
-              <Hint options={name}>
-                <input
-                  className="input"
-                  placeholder="Search"
-                  value={result}
-                  onChange={(e) => setResult(e.target.value)}
-                />
-              </Hint>
-              <Box
+              <input
+                className="input"
+                placeholder="Search"
+                value={result}
+                onChange={(e) => setResult(e.target.value)}
+              />
+
+              {/* <Box
                 display={'flex'}
                 justifyContent={'flex-end'}
                 placeItems={'center'}
               >
-                <Button
-                  position={'fixed'}
-                  variant={'unstyled'}
-                  mr="0.5rem"
-                  onClick={searchHandler}
-                >
+                <Button position={'fixed'} variant={'unstyled'} mr="0.5rem">
                   <RiSearchLine size={30} />
                 </Button>
-              </Box>
+              </Box> */}
             </Center>
 
             <motion.div
-              key={foundItem?.id}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{
@@ -116,14 +113,19 @@ const Search = () => {
                 damping: 20,
               }}
             >
-              <Box
-                shadow="md"
-                display={foundItem?.length < 1 ? 'none' : 'block'}
-              >
-                {foundItem.id && (
-                  <CardSearch foundItem={foundItem} close={onCloseSearch} />
-                )}
-              </Box>
+              {result && (
+                <Box shadow="md">
+                  {filteredItems.map((item, i) => {
+                    return (
+                      <CardSearch
+                        key={i}
+                        foundItem={item}
+                        close={onCloseSearch}
+                      />
+                    );
+                  })}
+                </Box>
+              )}
             </motion.div>
           </DrawerBody>
         </DrawerContent>

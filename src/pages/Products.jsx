@@ -10,7 +10,7 @@ import {
   useMediaQuery,
   GridItem,
 } from '@chakra-ui/react';
-
+import { fetchMenClothes } from '../features/menClothesSlice';
 import CardItem from '../components/CardItem';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -18,76 +18,155 @@ import { AnimatePresence, motion } from 'framer-motion';
 import TabsProduct from '../components/TabsProduct';
 import BraedsProducts from '../components/BraedsProducts';
 import AccordiansProduct from '../components/AccordiansProduct';
+import supabase from '../config/supabaseClient';
+import { fetchWomenClothes } from '../features/womenClothesSlice';
+import { fetchOffClothes } from '../features/offClothes';
 const Products = () => {
   const [isLargerThan530] = useMediaQuery('(min-width: 520px)');
-  const menItems = useSelector((state) => state.menProducts.value);
-  const womenItems = useSelector((state) => state.womenProducts.value);
   const [items, setItems] = useState([]);
   const [activeTab, setActiveTab] = useState('All');
   const [title, setTitle] = useState('');
   const [filterItems, setFilterItems] = useState([]);
-
-  let offItems = menItems.concat(womenItems);
-  const location = useLocation();
-  const scrollUp = () => {
-    window.scrollTo({
-      top: '0',
-      behavior: 'smooth',
-    });
-  };
+  const dispatch = useDispatch();
+  // let offItems = menItems.concat(womenItems);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectDesigner, setSelectDesigner] = useState([]);
+  const [selectedPriceRange, setSelectedPriceRange] = useState([0, 150]);
+  const loaction = useLocation();
+  const menClothes = useSelector((state) => state.menProducts.value);
+  const womenClothes = useSelector((state) => state.womenProducts.value);
+  const off = useSelector((state) => state.offProducts.value);
   useEffect(() => {
-    scrollUp();
-  }, []);
+    dispatch(fetchMenClothes());
+    dispatch(fetchWomenClothes());
+    dispatch(fetchOffClothes());
+  }, [dispatch]);
+
   useEffect(() => {
     switch (location.pathname) {
-      case (location.pathname = '/products/men'):
-        setItems(menItems);
+      case '/products/men':
+        setItems(menClothes);
         setTitle('Fashion Men');
         break;
-      case (location.pathname = '/products/women'):
-        setItems(womenItems);
-        setTitle('Fashion women');
-
-        break;
-      case (location.pathname = '/products/off'):
-        setItems(
-          offItems.filter((item) => {
-            if (item.off > 0) {
-              return item;
-            }
-          })
-        );
-        setTitle('UP To 50% OFF');
+      case '/products/women':
+        setItems(womenClothes);
+        setTitle('Fashion Women');
         break;
 
+      case '/products/off':
+        setItems(off);
+        setTitle('50% Off');
+        break;
       default:
-        setItems();
+        setItems(menClothes);
     }
-  }, [location]);
+  }, [location, items, menClothes, womenClothes]);
+
+  // useEffect(() => {
+  //   switch (activeTab) {
+  //     case 'All':
+  //       setFilterItems(items);
+  //       break;
+  //     case 'Clothing':
+  //       setFilterItems(items.filter((i) => i.category === 'clothing'));
+
+  //       break;
+  //     case 'Shoes':
+  //       setFilterItems(items.filter((i) => i.category === 'shoes'));
+
+  //       break;
+  //     case 'Bags':
+  //       setFilterItems(items.filter((i) => i.category === 'bags'));
+
+  //       break;
+  //     case 'Accessories':
+  //       setFilterItems(items.filter((i) => i.category === 'accessories'));
+
+  //       break;
+  //     default:
+  //       setFilterItems(items);
+  //       break;
+  //   }
+  // }, [activeTab, items]);
+  // useEffect(() => {
+  //   // Filter items based on selected brands, designers, and price range
+  //   const filteredItems = items.filter((item) => {
+  //     const brandMatch =
+  //       selectedBrands.length === 0 || selectedBrands.includes(item.brand);
+
+  //     const designerMatch =
+  //       selectDesigner.length === 0 || selectDesigner.includes(item.designer);
+
+  //     const priceMatch =
+  //       item.price >= selectedPriceRange[0] &&
+  //       item.price <= selectedPriceRange[1];
+
+  //     return brandMatch && designerMatch && priceMatch;
+  //   });
+
+  //   // Update the state with the filtered items
+  //   setFilterItems(filteredItems);
+  // }, [selectedBrands, selectDesigner, selectedPriceRange]);
+
+  // useEffect(() => {
+  //   // Filter items based on selected brands
+  //   const filteredItems = items.filter((item) => {
+  //     // If no brands are selected, show all items
+  //     if (selectDesigner.length === 0) {
+  //       return true;
+  //     }
+  //     // Check if the item's brand is in the selected brands
+  //     return selectDesigner.includes(item.designer);
+  //   });
+
+  //   // Update the state with the filtered items
+  //   setFilterItems(filteredItems);
+  // }, [selectDesigner]);
 
   useEffect(() => {
+    // Filter items based on the active tab
+    let filteredByTabItems = [];
     switch (activeTab) {
       case 'All':
-        setFilterItems(items);
+        filteredByTabItems = items;
         break;
       case 'Clothing':
-        setFilterItems(items.filter((i) => i.category === 'clothing'));
+        filteredByTabItems = items.filter((i) => i.category === 'clothing');
         break;
       case 'Shoes':
-        setFilterItems(items.filter((i) => i.category === 'shoes'));
+        filteredByTabItems = items.filter((i) => i.category === 'shoes');
         break;
       case 'Bags':
-        setFilterItems(items.filter((i) => i.category === 'bags'));
+        filteredByTabItems = items.filter((i) => i.category === 'bags');
         break;
       case 'Accessories':
-        setFilterItems(items.filter((i) => i.category === 'accessories'));
+        filteredByTabItems = items.filter((i) => i.category === 'accessories');
         break;
       default:
-        setFilterItems(items);
+        filteredByTabItems = items;
         break;
     }
-  }, [activeTab, items]);
 
+    // Filter items based on selected brands, designers, and price range
+    const filteredItems = filteredByTabItems.filter((item) => {
+      const brandMatch =
+        selectedBrands.length === 0 || selectedBrands.includes(item.brand);
+
+      const designerMatch =
+        selectDesigner.length === 0 || selectDesigner.includes(item.designer);
+
+      const priceMatch =
+        item.price >= selectedPriceRange[0] &&
+        item.price <= selectedPriceRange[1];
+
+      return brandMatch && designerMatch && priceMatch;
+    });
+
+    // Update the state with the filtered items
+    setFilterItems(filteredItems);
+  }, [activeTab, items, selectedBrands, selectDesigner, selectedPriceRange]);
+
+  
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -146,7 +225,15 @@ const Products = () => {
           }}
         >
           <GridItem colSpan={1} p="0.3rem">
-            <AccordiansProduct items={items} />
+            <AccordiansProduct
+              items={items}
+              setSelectedPriceRange={setSelectedPriceRange}
+              selectedPriceRange={selectedPriceRange}
+              selectedBrands={selectedBrands}
+              setSelectedBrands={setSelectedBrands}
+              selectDesigner={selectDesigner}
+              setSelectDesigner={setSelectDesigner}
+            />
           </GridItem>
           <GridItem colSpan={2} mt={{ sm: '-1rem' }}>
             <motion.div

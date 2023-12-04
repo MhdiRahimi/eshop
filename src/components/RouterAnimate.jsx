@@ -18,6 +18,9 @@ import Orders from '../pages/Orders';
 import { AnimatePresence } from 'framer-motion';
 import React, { useState, useEffect } from 'react';
 import supabase from '../config/supabaseClient';
+import AddProduct from '../pages/AddProduct';
+import AllProducts from '../pages/AllProducts';
+import EditProduct from '../pages/EditProduct';
 function RouterAnimate() {
   const location = useLocation();
   const [session, setSession] = useState();
@@ -38,6 +41,7 @@ function RouterAnimate() {
     <AnimatePresence>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
+        <Route path="/add" element={<AddProduct />} />
 
         {!session ? (
           <>
@@ -59,6 +63,8 @@ function RouterAnimate() {
 
         <Route path="payment" element={session ? <Payment /> : <Login />} />
         <Route path="productdetails/:id" element={<ProductDetails />} />
+        <Route path="allproducts" element={<AllProducts />} />
+        <Route path="edit/:productId" element={<EditProduct />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </AnimatePresence>
